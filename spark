@@ -1,0 +1,57 @@
+下载Scala-2.11.6
+wget http://www.scala-lang.org/files/archive/scala-2.11.6.tgz
+解压
+tar xvf scala-2.11.6.tgz
+移动
+sudo mv scala-2.11.6 /usr/local/scala
+-----------------------------------------
+编辑~/.bashrc
+sudo gedit ~/.bashrc
+设置Scala——home
+export SCALA_HOME=/usr/local/Scala
+export PATH=$PATH:$SCALA_HOME/bin
+-------------------------------------------
+使~/.bashrc生效
+source ~/.bashrc
+安装spark
+------------------------------------------
+下载spark
+wget http://d3kbcqa49mib13.cloudfront.net/spark-1.4.0-bin-hadoop2.6.tgz
+解压
+tar zxf spark-1.4.0-bin-hadoop2.6.tgz
+移动
+sudo mv spark-1.4.0-bin-hadoop2.6 /usr/local/spark
+编辑~/.bashrc
+sudo gedit ~/.bashrc
+设置spark——home
+export SPARK_HOME=/usr/local/spark
+export PATH=$PATH:$SPARK_HOME/bin
+使~/.bashrc生效
+source ~/.bashrc
+进入spark-shell交互界面
+spark-shell
+切换到SPARK配置文件目录
+cd /usr/local/spark/conf
+复制log4j模板到log4j.properties
+cp log4j.properties.template log4j.properties
+设置log4j
+sudo gedit log4j.properties 
+再次进入spark
+spark-shell
+启动Hadoop
+启动master data1 data2 data3 
+在master中：start-all.sh
+进入spark
+spark-shell--master local[4]
+读取本地文件
+val textFile=sc.textFile（"file：/usr/local/spark/README.md"）
+textFile.count
+读取HDFS
+val textFile=sc.textFile("hdfs://master:9000/usr/hduuser/wordcount/input/LICENSE.txt")
+textFile.count
+
+在Hadoop yarn 运行spark-shell
+SPARK_JAR=/usr//local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar
+HADOOP_CONF_DIR=/usr/local/hadoop/etc/Hadoop MASTER=yarn-client /usr/local/spark/bin/spark-shell
+设置spark jar文件路径
+SPARK_JAR=/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar
