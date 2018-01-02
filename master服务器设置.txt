@@ -1,0 +1,68 @@
+master服务器设置
+-----------------------------------------------------------------
+設定hdfs-site.xml
+
+sudo gedit /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+                                     
+删除DataNode的Hdfs设置，保留一下设置
+<property>
+    <name>dfs.replication</name>
+    <value>3</value>
+</property>
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>file:/usr/local/hadoop/hadoop_data/hdfs/namenode</value>
+</property>
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+编辑master文件
+master文件主要告诉Hadoop系统那一台服务器是NameNode
+sudo gedit /usr/local/hadoop/etc/hadoop/master
+
+輸入下列內容(服务器主机名):
+ 
+mast
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+設定slaves檔案
+sudo gedit /usr/local/hadoop/etc/hadoop/slaves
+
+輸入下列內容:
+ 
+data1 
+data2 
+data3
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+5.6.master連線至data1、data2、data3建立HDFS目錄
+-----------------------------------------------------
+-----------------------------------------------------
+master SSH連線至data1並建立HDFS目錄
+ssh data1
+登陆后data1后删除hdfs所有目录
+sudo rm -rf /usr/local/hadoop/hadoop_data/hdfs 
+创建DataNode存储目录
+sudo mkdir -p /usr/local/hadoop/hadoop_data/hdfs/datanode
+更改目录的所有者
+sudo chown hduser:hduser -R /usr/local/hadoop 
+中断data1连接，回到master
+exit
+分别登陆到data2、data3，同上操作
+---------------------------------------------------------
+
+---------------------------------------------------------
+5.7.建立與格式化NameNode HDFS 目錄
+---------------------------------------------------------
+在master输入以下命令，创建NameNode HDFS目录：
+删除之前的HDFS目录
+sudo rm -rf /usr/local/hadoop/hadoop_data/hdfs
+创建NameNode目录
+mkdir -p /usr/local/hadoop/hadoop_data/hdfs/namenode 
+更改目录所有者
+sudo chown -R hduser:hduser /usr/local/hadoop
+格式化NameNode HDFS 目錄
+hadoop namenode -format
+
+
+
+
