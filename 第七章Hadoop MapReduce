@@ -2,4 +2,4 @@ wordcount.Java
 http://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v2.0
 mkdir -p ~/wordcount/input
 cd ~/wordcount
-sudo gedit WordCount.Java
+sudo gedit WordCount.java
