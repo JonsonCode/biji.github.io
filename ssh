@@ -1,0 +1,20 @@
+ 1、在A机下生成公钥/私钥对。
+
+[hadoop@A ~]$ ssh-keygen -t rsa -P ''
+直接ssh-keygen然后三次回车就可以了。
+-P表示密码，-P '' 就表示空密码，也可以不用-P参数，这样就要三车回车，用-P就一次回车。
+它在/home/hadoop下生成.ssh目录，.ssh下有id_rsa和id_rsa.pub。
+
+        2、把A机下的id_rsa.pub复制到B机下，在B机的.ssh/authorized_keys文件里，我用scp复制。（如果B机器没有.ssh和authorized_keys文件则创建这个文件夹和文件先）
+
+[hadoop@A ~]$ scp .ssh/id_rsa.pub hadoop@192.168.80.181:/home/hadoop/id_rsa.pub 
+hadop@192.168.80.181's password:
+id_rsa.pub                                    100%  223     0.2KB/s   00:00
+      由于还没有免密码登录的，所以要输入密码。
+
+
+      3、B机把从A机复制的id_rsa.pub添加到.ssh/authorzied_keys文件里。
+
+[hadoop@B ~]$ cat id_rsa.pub >> .ssh/authorized_keys
+[hadoop@B ~]$ chmod 600 .ssh/authorized_keys
+      authorized_keys的权限要是600。
