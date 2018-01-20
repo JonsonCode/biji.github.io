@@ -1,0 +1,50 @@
+1>进入spark-shell交互界面
+spark-shell
+2>创建intRDD
+val intRDD=sc.parallelize(List(3,1,2,5,5))
+intRDD转化为Arry
+intRDD.collect()
+3>创建stringRDD
+val stringRDD=sc.parallelize(List("Apple","Orange","Banana","Grape","Apple"))
+将stringRDD转化为Arry
+strtingRDD.collect()
+4>map运算
+定义addOne函数
+def addOne(x:Int):Int={
+return (x+1)
+}
+
+intRDD.map(addOne).colelect()
+匿名函数语句
+intRDD.map(x=>x+1).colletc()
+匿名函数+匿名参数语句
+intRDD.map(_+1).collect()
+5>map字符串运算
+stringRDD.map(x=>"fruit:"+x).collect
+6>filter数字运算
+让intRDD筛选数字小于3
+intRDD.filter(x=>x<3).collect
+使用匿名参数让筛选数字小于3，可使用下划线_来取代x=>x<3
+intRDD.filter(_<3).collect
+以上两条语句的运算结果完全相同
+7>filter字符运算
+筛选内含ra的字符串
+stringRDD.filter(x=>x.contains("ra")).collect
+distinct运算（会删除重复的元素）
+删除intRDD重复的元素
+intRDD.distinct().collect()
+删除stringRDD重复的元素
+stringRDD.distinct().collect()
+randomSplit运算
+以随机数的方式按照4：6的比例分割为两个RDD
+val sRDD=intRDD.randomSplit(Array(0.4,0.6))
+读取第一个RDD
+sRDD(0).collect()
+sRDD(1).collect()
+groupBy运算
+ val gRDD=intRDD.groupBy(
+ {
+ x=>{if(x%2==0)"even" else "odd"}
+ ).collect
+
+
