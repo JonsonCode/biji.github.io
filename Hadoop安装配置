@@ -113,3 +113,16 @@ start-yarn.sh
 jps
 
 http://localhost:8088/
+
+复制节点
+
+将 hadoop-2.7.4 文件夹重打包后复制到其他子节点
+
+cd /home/hadoop/
+
+sudo tar zcvf hadoop.tar.gz hadoop-2.7.4
+scp hadoop.tar.gz hduser@data:/home/hduser/
+
+在其他子节点 解压
+
+tar -zxvf hadoop.tar.gz
