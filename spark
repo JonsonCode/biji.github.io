@@ -50,8 +50,32 @@ textFile.count
 val textFile=sc.textFile("hdfs://master:9000/usr/hduuser/wordcount/input/LICENSE.txt")
 textFile.count
 
-在Hadoop yarn 运行spark-shell
-SPARK_JAR=/usr//local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar
-HADOOP_CONF_DIR=/usr/local/hadoop/etc/Hadoop MASTER=yarn-client /usr/local/spark/bin/spark-shell
-设置spark jar文件路径
-SPARK_JAR=/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar
+在hadoop yarn 运行spark-shell
+
+SPARK_JAR=/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop master=yarn-client /usr/local/spark/bin/spark-shell
+
+
+构建Spark Standalone Cluster执行环境
+
+cp /usr/local/spark/conf/spark-env.sh.template /usr/local/spark/conf/spark-env.sh
+
+sudo gedit /usr/local/spark/conf/spark-env.sh
+
+export SPARK_MASTER_IP=master
+export SPARK_WORKER_CORES=1
+export SPARK_WORKER_MEMORY=20m
+export SPARK_WORKER_INSTANCES=2
+
+ssh data1
+
+sudo mkdir /usr/local/spark
+sudo chown hduser:hduser /usr/local/spark
+exit
+sudo scp -r /usr/local/spark hduser@data1:/usr/local
+exit
+
+sudo gedit /usr/local/spark/conf/slaves
+
+/usr/local/spark/sbin/start-all.sh
+
+spark-shell --master spark://master:7077
