@@ -1,0 +1,122 @@
+将eclipse解压到home
+创建eclipse链接到桌面
+下载项目所需要的library
+创建lib目录用于存放链接库
+mkdir -p ~/workspace/Lib
+复制spark hadoop jar
+
+sudo scp  /usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar  ~/workspace/Lib
+下载joda-tiem 、jfreechart、 jcomon jar并解压到~/workspace/Lib
+cd ~/workspace/Lib
+wget http://www.java2s.com/Code/JarDownload/joda/joda-time-2.2.jar.zip
+unzip -j joda-time-2.2.jar.zip
+
+wget http://www.java2s.com/Code/JarDownload/jfreechart/jfreechart-1.0.3.jar.zip
+unzip -j jfreechart-1.0.3.jar.zip
+
+wget http://www.java2s.com/Code/JarDownload/jcommon/jcommon-1.0.16.jar.zip
+unzip -j jcommon-1.0.16.jar.zip
+
+删除.zip以节省空间
+rm *.zip
+启动eclipse
+
+创建WordCount测试文本文件
+mkdir -p ~/workspace/WordCount/data
+cd ~/workspace/WordCount/data
+cp /usr/local/hadoop/LICENSE.txt LICENSE.txt
+rm -R ~/workspace/WordCount/data/output
+ll
+创建WorkCount.scala程序
+import org.apache.log4j.Logger
+
+import org.apache.log4j.Level
+
+import org.apache.spark.{ SparkConf, SparkContext }
+
+import org.apache.spark.rdd.RDD
+
+
+
+object RunWordCount {
+  
+  def main(args: Array[String]): Unit = {
+
+    
+    Logger.getLogger("org").setLevel(Level.OFF)
+    
+    System.setProperty("spark.ui.showConsoleProgress", "false")
+
+    
+    println("开始运行RunWordCount")
+  
+    
+    val sc = new SparkContext(new SparkConf().setAppName("wordCount").setMaster("local[4]"))
+
+
+    println("开始读取文本文件...")
+    
+    val textFile = sc.textFile("data/LICENSE.txt") 
+
+   
+    println("开始创建RDD...")
+    
+    val countsRDD = textFile.flatMap(line => line.split(" ")) 
+      
+        .map(word => (word, 1))
+     
+        .reduceByKey(_ + _) 
+
+   
+    println("开始保存到文本文件...")
+    
+    try {
+      
+      countsRDD.saveAsTextFile("data/output") 
+     
+      println("已经存盘成功")
+    
+     } catch {
+ 
+       case e: Exception => println("输出目录已经存在,请先删除原有目录");
+   
+     }
+
+  
+   }
+}
+
+
+导出为jar
+在本地local模式运行WordCoun程序
+删除之前的output目录
+rm -R ~/workspace/WordCount/data/output
+
+cd ~/workspace/WordCount
+本地运行WordCount
+
+ spark-submit --driver-memory 20m --master local[4] --class RunWordCount bin/WordCount.jar
+
+
+在hadoop yarn-client 运行wordCount程序
+start-all.sh
+复制测试文件到HDFS
+hadoop fs -mkdir data
+hadoop fs -copyFromLocal ~/workspace/WordCount/data/LICENSE.txt data
+hadoop fs -ls data
+修改环境配置文件
+sudo gedit  ~/.bashrc
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+source ~/.bashrc
+在yarn 上运行WordCount程序
+cd ~/workspace/WordCount
+ spark-submit --driver-memory 20m --class RunWordCount --master yarn-client bin/WordCount.jar
+hadoop fs -ls data/output
+hadoop fs -cat /user/hduser/data/output/part-00000|more
+hadoop fs -rm -R data/output
+在Spark Standalone Cluster上运行WordCount程序
+/usr/local/spark/sbin/start-all.sh
+
+cd ~/workspace/WordCount
+spark-submit --driver-memory 20m --class RunWordCount --master spark://master:7077 bin/WordCount.jar
+hadoop fs -ls  data/output
