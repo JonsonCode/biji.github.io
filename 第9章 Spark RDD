@@ -7,7 +7,7 @@ intRDD.collect()
 3>创建stringRDD
 val stringRDD=sc.parallelize(List("Apple","Orange","Banana","Grape","Apple"))
 将stringRDD转化为Arry
-strtingRDD.collect()
+stringRDD.collect()
 4>map运算
 定义addOne函数
 def addOne(x:Int):Int={
@@ -45,6 +45,59 @@ groupBy运算
  val gRDD=intRDD.groupBy(
  {
  x=>{if(x%2==0)"even" else "odd"}
- ).collect
+).collect
 
 
+-------------------------------------------
+accumulator累加器
+创建范例RDD
+val intRDD=sc.parallelize(List(3,1,2,5,5))
+创建total累加器
+val total=sc.accumulator(0.0)
+创建num累加器
+val num=sc.accumulator(0)
+使用foreach传入参数i，针对每条数据执行
+intRDD.foreach(i=>{
+total+=i
+num+=1
+})
+显示求和和计数
+println("total="+total.value+",num="+num.value)
+计算平均
+val avg=total.value/num.value
+-----------------------------------------------
+RDD Presistence持久化
+创建范例RDD
+val intRddMemory=sc.parallelize(List(3,1,2,5,5))
+将intRddMemory持久化
+intRddMemory.persist()
+取消持久化
+intRddMemory.unpersist()
+设置存储等级范例
+设置存储等级，必须先导入相关链接库
+import org.apache.spark.storage.StorageLevel
+创建范例RDD
+val intRddMemoryAndDisk=sc.parallelize(List(3,1,2,5,5))
+设置选项为StorageLevel.MEMORY_AND_DISK
+intRddMemoryAndDisk.persist(StorageLevel.MEMORY_AND_DISK)
+将intRddMemoryAndDisk取消持久化
+intRddMemoryAndDisk.unpersist()
+-----------------------------------------------------
+使用Spark创建WordCount
+创建WordeCount的数据目录
+mkdir -p ~/workspace/WordCount/data
+cd ~/workspace/WordCount/data
+gedit test.txt
+输入：
+Apple Apple Orange 
+Banana Grape Grape
+进入spark-shell
+在~/workspace/WordCount/data目录下输入spark-shell
+执行WordCount命令
+读取文本文件
+val textFile=sc.textFile("file:/home/hduser/workspace/WordCount/data/test.txt")
+使用flatMap空格符分开单词，并读取每个单词
+val stringRDD=textFile.flatMap(line=>line.split(" "))
+val countsRDD=stringRDD.map(word=> (word, 1)).reduceByKey(_+_)
+保存计算结果
+countsRDD.saveAsTextFile("file:/home/hduser/workspace/WordCount/data/output")
